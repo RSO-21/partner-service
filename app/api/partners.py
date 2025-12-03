@@ -31,3 +31,29 @@ def get_partner(partner_id: int, db: Session = Depends(get_db)):
     if not partner:
         raise HTTPException(status_code=404, detail="Partner not found")
     return partner
+
+
+@router.put("/{partner_id}", response_model=schemas.PartnerRead)
+def update_partner(partner_id: int, partner_update: schemas.PartnerUpdate, db: Session = Depends(get_db)):
+    partner = db.query(models.Partner).filter(models.Partner.id == partner_id).first()
+    if not partner:
+        raise HTTPException(status_code=404, detail="Partner not found")
+
+    update_data = partner_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(partner, key, value)
+
+    db.commit()
+    db.refresh(partner)
+    return partner
+
+
+@router.delete("/{partner_id}", status_code=204)
+def delete_partner(partner_id: int, db: Session = Depends(get_db)):
+    partner = db.query(models.Partner).filter(models.Partner.id == partner_id).first()
+    if not partner:
+        raise HTTPException(status_code=404, detail="Partner not found")
+
+    db.delete(partner)
+    db.commit()
+    return None
