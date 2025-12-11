@@ -50,7 +50,7 @@ PGHOST=your_postgres_host
 PGUSER=your_postgres_user
 PGPASSWORD=your_postgres_password
 PGPORT=5432
-PGDATABASE=rso
+PGDATABASE=partner_service
 ```
 ---
 
