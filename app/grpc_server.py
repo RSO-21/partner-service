@@ -3,14 +3,18 @@ from concurrent import futures
 
 from sqlalchemy.orm import Session
 
-from .db import SessionLocal
+from .db import SessionLocal, get_db_session
 from . import models
 from .grpc_generated import partner_pb2, partner_pb2_grpc
 
 
 class PartnerServiceServicer(partner_pb2_grpc.PartnerServiceServicer):
     def GetPartner(self, request, context):
-        db: Session = SessionLocal()
+        metadata = dict(context.invocation_metadata())
+        tenant_id = metadata.get('x-tenant-id', 'public')
+        
+        db = get_db_session(tenant_id)
+        #db: Session = SessionLocal()
         try:
             partner = (
                 db.query(models.Partner)
