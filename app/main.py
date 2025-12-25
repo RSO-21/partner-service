@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
@@ -10,6 +11,17 @@ from .api.partners import router as partners_router
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Partner Service")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:4200",  # Angular dev
+        "http://localhost:5173",  # Vite (if used)
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],        # ← IMPORTANT
+    allow_headers=["*"],        # ← IMPORTANT (X-Tenant-ID!)
+)
 
 Instrumentator().instrument(app).expose(app)
 
