@@ -26,6 +26,14 @@ jobs:
         run: |
           docker build -t "${{ secrets.ACR_LOGIN_SERVER }}/partner-service:${{ steps.vars.outputs.TAG }}" .
 
-      - name: Push
+      - name: Push SHA tag
         run: |
           docker push "${{ secrets.ACR_LOGIN_SERVER }}/partner-service:${{ steps.vars.outputs.TAG }}"
+
+      - name: Tag dev
+        run: |
+          docker tag "${{ secrets.ACR_LOGIN_SERVER }}/partner-service:${{ steps.vars.outputs.TAG }}" "${{ secrets.ACR_LOGIN_SERVER }}/partner-service:dev"
+
+      - name: Push dev tag
+        run: |
+          docker push "${{ secrets.ACR_LOGIN_SERVER }}/partner-service:dev"
