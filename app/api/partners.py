@@ -36,7 +36,7 @@ def get_db_with_schema(tenant_id: str = Depends(get_tenant_id)):
     Dependency that provides a SQLAlchemy session
     bound to the tenant-specific schema.
     """
-    return get_db_session(schema=tenant_id)
+    yield from get_db_session(schema=tenant_id)
 
 
 # ─────────────────────────────
