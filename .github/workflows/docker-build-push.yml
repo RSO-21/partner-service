@@ -2,7 +2,7 @@ name: Build and Push to ACR (partner-service)
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -37,13 +37,3 @@ jobs:
       - name: Push dev tag
         run: |
           docker push "${{ secrets.ACR_LOGIN_SERVER }}/partner-service:dev"
-
-      - name: Job summary
-        run: |
-          echo "## 🐳 Docker Image Built" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Service:** partner-service" >> $GITHUB_STEP_SUMMARY
-          echo "**SHA tag:** \`${GITHUB_SHA::7}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Prod image:**" >> $GITHUB_STEP_SUMMARY
-          echo "\`${{ secrets.ACR_LOGIN_SERVER }}/partner-service:${GITHUB_SHA::7}\`" >> $GITHUB_STEP_SUMMARY
