@@ -24,11 +24,11 @@ def get_db():
     finally:
         db.close()
 
-def get_db_session(schema: str = None):
+def get_db_session(schema: str | None = None):
     session = SessionLocal()
     try:
-        # Set search_path for this session
-        session.execute(text(f"SET search_path TO {schema}"))
+        if schema:
+            session.execute(text(f"SET search_path TO {schema}"))
         yield session
     finally:
         session.close()
