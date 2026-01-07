@@ -10,21 +10,21 @@ from .grpc_generated import partner_pb2, partner_pb2_grpc
 
 class PartnerServiceServicer(partner_pb2_grpc.PartnerServiceServicer):
     def GetPartner(self, request, context):
+        # 1. Extract tenant from metadata (similar to your get_tenant_id header logic)
         metadata = dict(context.invocation_metadata())
         tenant_id = metadata.get('x-tenant-id', 'public')
-        
-        db = get_db_session(tenant_id)
-        #db: Session = SessionLocal()
-        try:
+
+        # 2. Use 'with' to drive the generator and get the actual session
+        # This handles the try/finally/close automatically
+        with get_db_session(schema=tenant_id) as db:
             partner = (
                 db.query(models.Partner)
                 .filter(models.Partner.id == request.id)
                 .first()
             )
+
             if not partner:
-                context.set_details("Partner not found")
-                context.set_code(grpc.StatusCode.NOT_FOUND)
-                return partner_pb2.GetPartnerResponse()
+                context.abort(grpc.StatusCode.NOT_FOUND, "Partner not found")
 
             return partner_pb2.GetPartnerResponse(
                 id=partner.id,
@@ -32,8 +32,6 @@ class PartnerServiceServicer(partner_pb2_grpc.PartnerServiceServicer):
                 active=partner.active,
                 tenant_id=partner.tenant_id or "",
             )
-        finally:
-            db.close()
 
 
 def serve():
