@@ -32,11 +32,8 @@ def get_tenant_id(x_tenant_id: Optional[str] = Header(None)) -> str:
 
 
 def get_db_with_schema(tenant_id: str = Depends(get_tenant_id)):
-    """
-    Dependency that provides a SQLAlchemy session
-    bound to the tenant-specific schema.
-    """
-    yield from get_db_session(schema=tenant_id)
+    with get_db_session(schema=tenant_id) as db:
+        yield db
 
 
 # ─────────────────────────────

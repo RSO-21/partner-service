@@ -2,6 +2,8 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+import threading
+from .grpc_server import serve
 
 from prometheus_fastapi_instrumentator import Instrumentator
 
@@ -25,6 +27,12 @@ app.add_middleware(
 
 Instrumentator().instrument(app).expose(app)
 
+@app.on_event("startup")
+def start_grpc_server():
+    threading.Thread(
+        target=serve,
+        daemon=True
+    ).start()
 
 @app.get("/health")
 def health_check(db: Session = Depends(get_db)):
