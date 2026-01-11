@@ -14,10 +14,7 @@ logger = logging.getLogger(__name__)
 # ─────────────────────────────
 # Router configuration
 # ─────────────────────────────
-router = APIRouter(
-    prefix="/partners",
-    tags=["partners"],
-)
+router = APIRouter()
 
 
 # ─────────────────────────────
@@ -39,7 +36,7 @@ def get_db_with_schema(tenant_id: str = Depends(get_tenant_id)):
 # ─────────────────────────────
 # List all partners (tenant scoped)
 # ─────────────────────────────
-@router.get("/", response_model=List[schemas.PartnerRead])
+@router.get("/list_partners", response_model=List[schemas.PartnerRead])
 def list_partners(db: Session = Depends(get_db_with_schema)):
     """
     Return all partners for the current tenant.

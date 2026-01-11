@@ -47,5 +47,4 @@ def health_check(db: Session = Depends(get_db)):
 def root():
     return {"message": "Partner Service is running"}
 
-
 app.include_router(partners_router)
